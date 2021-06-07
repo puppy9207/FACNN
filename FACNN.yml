@@ -1,0 +1,23 @@
+# Device 관련 설정
+device: gpu
+gpu_ids: 3
+
+# 모델 관련 설정
+model_pretrained_path: weights/x2_back/0332.pth
+scale_factor: 2
+num_channels: 3
+
+# 학습 및 추론 관련 설정
+crop_size: 128
+epoch: 6000
+
+# 데이터 셋 관련 설정
+train_root_path: dataset
+eval_root_path: EvalImage
+test_root_path: TestImage
+
+train_dataset_name: Flickr2K_HR
+test_dataset_name: temp
+
+wandb: True
+test : False
