@@ -19,6 +19,7 @@ dataset/
 *.mp4
 *.pth
 !canny.png
+!snapshot.jpg
 # C extensions
 *.so
 
