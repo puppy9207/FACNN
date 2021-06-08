@@ -8,12 +8,12 @@ class FACNN(nn.Module):
         super(FACNN, self).__init__()
         self.scale = scale
         self.conv1 = nn.Sequential(
-                nn.Conv2d(3,64,kernel_size=5, stride=1, padding=2, bias=True),
+                nn.Conv2d(3,32,kernel_size=5, stride=1, padding=2, bias=True),
                 nn.ReLU()
         )
         self.conv2 = nn.Sequential(
-            nn.Conv2d(64,32,kernel_size=1, stride=1, padding=0),
-            nn.Conv2d(32,12,kernel_size=1, stride=1, padding=0),
+            nn.Conv2d(32,64,kernel_size=1, stride=1, padding=0),
+            nn.Conv2d(64,12,kernel_size=1, stride=1, padding=0),
             nn.ReLU()
         )
         self.conv3 = nn.Sequential(

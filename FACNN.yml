@@ -3,7 +3,7 @@ device: gpu
 gpu_ids: 3
 
 # 모델 관련 설정
-model_pretrained_path: weights/x2_back/0332.pth
+model_pretrained_path: ""
 scale_factor: 2
 num_channels: 3
 

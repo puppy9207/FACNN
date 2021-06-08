@@ -18,26 +18,26 @@ def get_degrade_seq():
     # -----------------------
     # isotropic gaussian blur
     # -----------------------
-    B_iso = {
-        "mode": "blur",
-        "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
-        "is_aniso": False,
-        "sigma": random.uniform(0.0, 0.5),
-    }
-    degrade_seq.append(B_iso)
+    # B_iso = {
+    #     "mode": "blur",
+    #     "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
+    #     "is_aniso": False,
+    #     "sigma": random.uniform(0.0, 0.2),
+    # }
+    # degrade_seq.append(B_iso)
 
-    # -------------------------
-    # anisotropic gaussian blur
-    # -------------------------
-    B_aniso = {
-        "mode": "blur",
-        "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
-        "is_aniso": True,
-        "x_sigma": random.uniform(0.0, 0.5),
-        "y_sigma": random.uniform(0.0, 0.5),
-        "rotation": random.uniform(0, 180)
-    }
-    degrade_seq.append(B_aniso)
+    # # -------------------------
+    # # anisotropic gaussian blur
+    # # -------------------------
+    # B_aniso = {
+    #     "mode": "blur",
+    #     "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
+    #     "is_aniso": True,
+    #     "x_sigma": random.uniform(0.0, 0.2),
+    #     "y_sigma": random.uniform(0.0, 0.2),
+    #     "rotation": random.uniform(0, 180)
+    # }
+    # degrade_seq.append(B_aniso)
 
     # # -----------
     # # down sample
@@ -101,8 +101,13 @@ def get_degrade_seq():
     # -------
     # shuffle
     # -------
+    B_edge = {
+        "mode": "edge",
+        "canny_low" : random.randint(50,70),
+        "canny_up" : random.randint(71,90)
+    }
     random.shuffle(degrade_seq)
-
+    degrade_seq.insert(0,B_edge)
     # ---------------
     # last jpeg noise
     # ---------------
@@ -142,8 +147,19 @@ def degradation_pipeline(img):
             img = get_camera(img, degrade_dict)
         elif mode == 'restore':
             img = get_restore(img, h, w, degrade_dict)
+        elif mode == "edge":
+            img = get_edge(img,degrade_dict)
     return img
 
+def get_edge(img,degrade_dict):
+    origin = img
+    img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    canny_low = degrade_dict["canny_low"]
+    canny_up = degrade_dict["canny_up"]
+    img_canny = cv2.Canny(img_gray,canny_low,canny_up)
+    img_canny = cv2.merge([img_canny,img_canny,img_canny])
+    img = cv2.bitwise_or(origin,img_canny)
+    return img
 
 def get_blur(img, degrade_dict):
     k_size = degrade_dict["kernel_size"]
