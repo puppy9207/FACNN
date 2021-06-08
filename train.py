@@ -105,7 +105,7 @@ class Main():
                     best_lpips = lpips
                     print(f"Best PSNR : {best_psnr} , Best SSIM : {best_ssim}, Best LPIPS : {best_lpips[0][0][0][0]}")
                     torch.save(model.state_dict(), "best_back.pth")
-                save_epoch = "{0:04d}".format(epoch+333)
+                save_epoch = "{0:04d}".format(epoch+1)
                 torch.save(model.state_dict(), os.path.join("weights", f"x2_back/{save_epoch}.pth"))
                 if opt["wandb"]:
                     wandb.log({

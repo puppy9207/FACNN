@@ -20,12 +20,13 @@ class FACNN(nn.Module):
             nn.Conv2d(12,12,kernel_size=3, stride=1, padding=1),
             nn.Conv2d(12,3,kernel_size=3, stride=1, padding=1),
             nn.ReLU()
+            
         )
     def forward(self, x):
-        # x = F.interpolate(x,scale_factor=(self.scale, self.scale), mode='bicubic',align_corners=True)
+        x = F.interpolate(x,scale_factor=(self.scale, self.scale), mode='bicubic',align_corners=True)
         out = self.conv1(x)
         out = self.conv2(out)
         out = self.conv3(out)
-        out = F.interpolate(out,scale_factor=(self.scale, self.scale), mode='bicubic',align_corners=True)
-        # out = out.squeeze(0).permute(1,2,0).mul(255.0).clamp(0,255.0).type(torch.ByteTensor)
+        # out = F.interpolate(out,scale_factor=(self.scale, self.scale), mode='bicubic',align_corners=True)
+        out = out.squeeze(0).permute(1,2,0).mul(255.0).clamp(0,255.0).type(torch.ByteTensor)
         return out

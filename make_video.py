@@ -45,13 +45,13 @@ if __name__=="__main__":
     
     model = FACNN(2).to(device)
     print(model)
-    model.load_state_dict(torch.load("weights/x2/6000.pth"))
+    model.load_state_dict(torch.load("weights/x2_back/0135.pth"))
     model.eval()
     video_path = "S02_Movie_720p.ts"
     videoIO = VideoIO('sssss')
     videoIO.initVideoCapture(video_path)
     #initVideoWriter(self, width, height, target_video_path='test.mp4', fps=29.97):
-    videoIO.initVideoWriter(2560,1440, 'test6000.mp4')
+    videoIO.initVideoWriter(2560,1440, 'test135.mp4')
     for _ in range(videoIO.getTotalFrame()):
         ret, frame = videoIO.getFrame()
         

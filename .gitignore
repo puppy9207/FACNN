@@ -12,12 +12,13 @@ wandb/
 weights/
 dataset/
 
+
 *.jpg
 *.png
 *.ts
 *.mp4
 *.pth
-
+!canny.png
 # C extensions
 *.so
 

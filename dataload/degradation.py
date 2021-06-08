@@ -135,20 +135,22 @@ def degradation_pipeline(img):
     # print_degrade_seg(degrade_seq)
     for degrade_dict in degrade_seq:
         mode = degrade_dict["mode"]
-        if mode == "blur":
-            img = get_blur(img, degrade_dict)
-        elif mode == "down":
-            img = get_down(img, degrade_dict)
-        elif mode == "noise":
-            img = get_noise(img, degrade_dict)
-        elif mode == 'jpeg':
-            img = get_jpeg(img, degrade_dict)
-        elif mode == 'camera':
-            img = get_camera(img, degrade_dict)
-        elif mode == 'restore':
-            img = get_restore(img, h, w, degrade_dict)
-        elif mode == "edge":
+        if mode == "edge":
             img = get_edge(img,degrade_dict)
+        # if mode == "blur":
+        #     img = get_blur(img, degrade_dict)
+        # elif mode == "down":
+        #     img = get_down(img, degrade_dict)
+        # elif mode == "noise":
+        #     img = get_noise(img, degrade_dict)
+        # elif mode == 'jpeg':
+        #     img = get_jpeg(img, degrade_dict)
+        # elif mode == 'camera':
+        #     img = get_camera(img, degrade_dict)
+        # elif mode == 'restore':
+        #     img = get_restore(img, h, w, degrade_dict)
+        # elif mode == "edge":
+        #     img = get_edge(img,degrade_dict)
     return img
 
 def get_edge(img,degrade_dict):
