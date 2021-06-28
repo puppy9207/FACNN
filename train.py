@@ -1,5 +1,5 @@
 import torch
-from model.FACNN import FACNN
+from model.FACNN import FACNN,LDSR_V4
 from model.sam import SAM
 from model.calculator import PSNR_tensor,SSIM,LPIPS
 import torch.backends.cudnn as cudnn
@@ -48,18 +48,18 @@ class Main():
             
 
     def train(self):
-        dataset = TrainDataset(self.opt,self.opt["train_dataset_name"])
+        dataset = TrainDataset(self.opt,self.opt["train_dataset_name"],self.device)
         model = self.getModel()
         base_optimizer = torch.optim.Adam
-        optimizer = SAM(model.parameters(),base_optimizer, lr=1e-3, betas=(0.9, 0.999))
+        optimizer = SAM(model.parameters(),base_optimizer, lr=0.0001, betas=(0.9, 0.999))
         pixel_criterion = torch.nn.L1Loss().to(self.device)
         dataloader = torch.utils.data.DataLoader(dataset, 
-            batch_size=16,
+            batch_size=8,
             shuffle=True,
             pin_memory=True,
             sampler=None,
             num_workers=8)
-        img  = Image.open("80049126.jpg")
+        img  = Image.open("image/80049126.jpg")
         origin = transforms.ToTensor()(img).to(self.device)
         lr = img.resize((img.width//2, img.height//2), Image.BICUBIC)
         base_image = transforms.ToTensor()(lr)
@@ -93,7 +93,7 @@ class Main():
                 model.eval()
                 base_image = base_image.to(self.device)
                 result = model(base_image)
-                vutils.save_image(result.detach(), "result.png")
+                vutils.save_image(result.detach(), "image/result.png")
                 psnr = PSNR_tensor(origin,result)
                 np_origin = origin.permute(1,2,0).cpu().detach().numpy()
                 np_result = result.squeeze().permute(1,2,0).cpu().detach().numpy()
@@ -104,9 +104,9 @@ class Main():
                     best_ssim = ssim
                     best_lpips = lpips
                     print(f"Best PSNR : {best_psnr} , Best SSIM : {best_ssim}, Best LPIPS : {best_lpips[0][0][0][0]}")
-                    torch.save(model.state_dict(), "best_back.pth")
-                save_epoch = "{0:04d}".format(epoch+1)
-                torch.save(model.state_dict(), os.path.join("weights", f"x2_back/{save_epoch}.pth"))
+                    torch.save(model.state_dict(), "best.pth")
+                save_epoch = "{0:04d}".format(epoch+275)
+                torch.save(model.state_dict(), os.path.join("weights", f"x2/{save_epoch}.pth"))
                 if opt["wandb"]:
                     wandb.log({
                     "SR_img": [wandb.Image(result.detach(), caption=epoch)],

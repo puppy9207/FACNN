@@ -18,26 +18,26 @@ def get_degrade_seq():
     # -----------------------
     # isotropic gaussian blur
     # -----------------------
-    # B_iso = {
-    #     "mode": "blur",
-    #     "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
-    #     "is_aniso": False,
-    #     "sigma": random.uniform(0.0, 0.2),
-    # }
-    # degrade_seq.append(B_iso)
+    B_iso = {
+        "mode": "blur",
+        "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
+        "is_aniso": False,
+        "sigma": random.uniform(0.0, 0.2),
+    }
+    degrade_seq.append(B_iso)
 
-    # # -------------------------
-    # # anisotropic gaussian blur
-    # # -------------------------
-    # B_aniso = {
-    #     "mode": "blur",
-    #     "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
-    #     "is_aniso": True,
-    #     "x_sigma": random.uniform(0.0, 0.2),
-    #     "y_sigma": random.uniform(0.0, 0.2),
-    #     "rotation": random.uniform(0, 180)
-    # }
-    # degrade_seq.append(B_aniso)
+    # -------------------------
+    # anisotropic gaussian blur
+    # -------------------------
+    B_aniso = {
+        "mode": "blur",
+        "kernel_size": random.choice([7, 9, 11, 13, 15, 17, 19, 21]),
+        "is_aniso": True,
+        "x_sigma": random.uniform(0.0, 0.2),
+        "y_sigma": random.uniform(0.0, 0.2),
+        "rotation": random.uniform(0, 180)
+    }
+    degrade_seq.append(B_aniso)
 
     # # -----------
     # # down sample
@@ -75,7 +75,7 @@ def get_degrade_seq():
     # --------------
     B_noise = {
         "mode": "noise",
-        "noise_level": random.randint(1, 12)
+        "noise_level": random.randint(1, 25)
     }
     degrade_seq.append(B_noise)
 
@@ -135,16 +135,19 @@ def degradation_pipeline(img):
     # print_degrade_seg(degrade_seq)
     for degrade_dict in degrade_seq:
         mode = degrade_dict["mode"]
-        if mode == "edge":
-            img = get_edge(img,degrade_dict)
-        # if mode == "blur":
+        # if mode == "edge":
+        #     img = get_edge(img,degrade_dict)
+        if mode == "noise":
+            img = get_noise(img, degrade_dict)
+        # elif mode == "blur":
         #     img = get_blur(img, degrade_dict)
+        # elif mode == 'jpeg':
+        #     img = get_jpeg(img, degrade_dict)
         # elif mode == "down":
         #     img = get_down(img, degrade_dict)
         # elif mode == "noise":
         #     img = get_noise(img, degrade_dict)
-        # elif mode == 'jpeg':
-        #     img = get_jpeg(img, degrade_dict)
+        
         # elif mode == 'camera':
         #     img = get_camera(img, degrade_dict)
         # elif mode == 'restore':
@@ -156,10 +159,17 @@ def degradation_pipeline(img):
 def get_edge(img,degrade_dict):
     origin = img
     img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    r = random.randint(0,255)
+    g = random.randint(0,255)
+    b = random.randint(0,255)
     canny_low = degrade_dict["canny_low"]
     canny_up = degrade_dict["canny_up"]
     img_canny = cv2.Canny(img_gray,canny_low,canny_up)
-    img_canny = cv2.merge([img_canny,img_canny,img_canny])
+    temp = img_canny.copy()
+    _r = np.where(img_canny>0,r,temp)
+    _g = np.where(img_canny>0,g,temp)
+    _b = np.where(img_canny>0,b,temp)
+    img_canny = cv2.merge([_r,_g,_b])
     img = cv2.bitwise_or(origin,img_canny)
     return img
 
